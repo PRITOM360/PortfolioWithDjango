@@ -1,0 +1,673 @@
+{% extends 'base.html' %}
+
+{% block title %}Home | {{ block.super }}{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="relative h-screen flex items-center"
+         :class="{ 'bg-gradient-to-r from-blue-600 to-indigo-800': !darkMode, 'bg-gradient-to-r from-gray-800 to-gray-900': darkMode }">
+    <div class="absolute inset-0 bg-black opacity-50"></div>
+    <div class="container mx-auto px-4 relative z-10 text-white">
+        <div class="max-w-3xl mx-auto text-center">
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight animate-fade-in">
+                Hi, I'm <span class="text-blue-400">John Doe</span>
+            </h1>
+            <p class="text-xl md:text-2xl mb-8 text-gray-200">
+                Full Stack Developer & UI/UX Designer
+            </p>
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="{% url 'projects:project_list' %}" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition duration-300 transform hover:scale-105">
+                    View My Work
+                </a>
+                <a href="{% url 'core:contact' %}" class="px-6 py-3 bg-transparent hover:bg-white/10 text-white font-medium rounded-md border border-white transition duration-300 transform hover:scale-105">
+                    Contact Me
+                </a>
+            </div>
+            
+            <!-- Scroll Down Indicator -->
+            <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+                <a href="#about" class="text-white">
+                    <i class="fas fa-chevron-down text-2xl"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- About Section Summary -->
+<section id="about" class="py-20" :class="{ 'bg-white': !darkMode, 'bg-gray-900': darkMode }">
+    <div class="container mx-auto px-4">
+        <div class="flex flex-col md:flex-row items-center gap-12">
+            <!-- Image -->
+            <div class="md:w-1/3">
+                {% if about and about.profile_image %}
+                <img src="{{ about.profile_image.url }}" alt="Profile Picture" class="rounded-lg shadow-xl w-full h-auto object-cover transform transition duration-500 hover:scale-105">
+                {% else %}
+                <div class="bg-gray-300 dark:bg-gray-700 rounded-lg w-full aspect-square flex items-center justify-center">
+                    <i class="fas fa-user text-6xl text-gray-500 dark:text-gray-400"></i>
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Content -->
+            <div class="md:w-2/3">
+                <h2 class="text-3xl font-bold mb-6 text-blue-600 dark:text-blue-400">About Me</h2>
+                
+                {% if about %}
+                <p class="text-lg mb-6 leading-relaxed text-gray-700 dark:text-gray-300">
+                    {{ about.content|safe|truncatewords_html:50 }}
+                </p>
+                {% else %}
+                <p class="text-lg mb-6 leading-relaxed text-gray-700 dark:text-gray-300">
+                    I'm a passionate full-stack developer with expertise in modern web technologies. I love creating beautiful, functional, and user-friendly applications that solve real-world problems.
+                </p>
+                {% endif %}
+                
+                <!-- Stats -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+                    <div class="p-4 rounded-lg bg-gray-100 dark:bg-gray-800 text-center transform transition duration-300 hover:scale-105">
+                        <h3 class="text-3xl font-bold text-blue-600 dark:text-blue-400">{{ about.years_experience|default:"5+" }}</h3>
+                        <p class="text-gray-600 dark:text-gray-400">Years Experience</p>
+                    </div>
+                    <div class="p-4 rounded-lg bg-gray-100 dark:bg-gray-800 text-center transform transition duration-300 hover:scale-105">
+                        <h3 class="text-3xl font-bold text-blue-600 dark:text-blue-400">{{ about.projects_count|default:"50+" }}</h3>
+                        <p class="text-gray-600 dark:text-gray-400">Projects Completed</p>
+                    </div>
+                    <div class="p-4 rounded-lg bg-gray-100 dark:bg-gray-800 text-center transform transition duration-300 hover:scale-105">
+                        <h3 class="text-3xl font-bold text-blue-600 dark:text-blue-400">{{ about.clients_count|default:"20+" }}</h3>
+                        <p class="text-gray-600 dark:text-gray-400">Happy Clients</p>
+                    </div>
+                </div>
+                
+                <div class="flex flex-wrap gap-4">
+                    <a href="{% url 'core:about' %}" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition duration-300">
+                        Read More
+                    </a>
+                    {% if about and about.resume %}
+                    <a href="{{ about.resume.url }}" target="_blank" class="px-6 py-3 bg-transparent text-blue-600 dark:text-blue-400 font-medium rounded-md border border-blue-600 dark:border-blue-400 hover:bg-blue-50 dark:hover:bg-gray-800 transition duration-300">
+                        <i class="fas fa-download mr-2"></i> Download CV
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Skills Section -->
+<section class="py-20" :class="{ 'bg-gray-50': !darkMode, 'bg-gray-800': darkMode }">
+    <div class="container mx-auto px-4">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold mb-4 text-blue-600 dark:text-blue-400">My Skills</h2>
+            <p class="text-lg max-w-2xl mx-auto text-gray-700 dark:text-gray-300">
+                Here are some of my technical skills and expertise areas that I've developed over the years.
+            </p>
+        </div>
+        
+        {% if skill_categories %}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {% for category_name, skills in skill_categories.items %}
+            <div class="bg-white dark:bg-gray-700 rounded-lg shadow-md p-6 transition duration-300 hover:shadow-lg">
+                <h3 class="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">{{ category_name }}</h3>
+                
+                <div class="space-y-4">
+                    {% for skill in skills|slice:":5" %}
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="font-medium text-gray-700 dark:text-gray-300">{{ skill.name }}</span>
+                            <span class="text-sm text-gray-600 dark:text-gray-400">{{ skill.level }}%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2.5">
+                            <div class="bg-blue-600 dark:bg-blue-500 h-2.5 rounded-full" style="width: {{ skill.level }}%"></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="text-center mt-10">
+            <a href="{% url 'core:skills' %}" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition duration-300">
+                View All Skills
+            </a>
+        </div>
+        {% else %}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Placeholder for skills -->
+            <div class="bg-white dark:bg-gray-700 rounded-lg shadow-md p-6">
+                <h3 class="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Programming Languages</h3>
+                
+                <div class="space-y-4">
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="font-medium text-gray-700 dark:text-gray-300">JavaScript</span>
+                            <span class="text-sm text-gray-600 dark:text-gray-400">90%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2.5">
+                            <div class="bg-blue-600 dark:bg-blue-500 h-2.5 rounded-full" style="width: 90%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="font-medium text-gray-700 dark:text-gray-300">Python</span>
+                            <span class="text-sm text-gray-600 dark:text-gray-400">85%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2.5">
+                            <div class="bg-blue-600 dark:bg-blue-500 h-2.5 rounded-full" style="width: 85%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white dark:bg-gray-700 rounded-lg shadow-md p-6">
+                <h3 class="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Frameworks & Libraries</h3>
+                
+                <div class="space-y-4">
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="font-medium text-gray-700 dark:text-gray-300">React</span>
+                            <span class="text-sm text-gray-600 dark:text-gray-400">92%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2.5">
+                            <div class="bg-blue-600 dark:bg-blue-500 h-2.5 rounded-full" style="width: 92%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="font-medium text-gray-700 dark:text-gray-300">Django</span>
+                            <span class="text-sm text-gray-600 dark:text-gray-400">88%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2.5">
+                            <div class="bg-blue-600 dark:bg-blue-500 h-2.5 rounded-full" style="width: 88%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Services Section -->
+<section class="py-20" :class="{ 'bg-white': !darkMode, 'bg-gray-900': darkMode }">
+    <div class="container mx-auto px-4">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold mb-4 text-blue-600 dark:text-blue-400">Services I Offer</h2>
+            <p class="text-lg max-w-2xl mx-auto text-gray-700 dark:text-gray-300">
+                I provide a range of services to help businesses and individuals achieve their digital goals.
+            </p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% if services %}
+                {% for service in services %}
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 transition-transform duration-300 hover:transform hover:scale-105">
+                    <div class="text-blue-600 dark:text-blue-400 text-3xl mb-4">
+                        <i class="{{ service.icon }}"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-200">{{ service.title }}</h3>
+                    <p class="text-gray-600 dark:text-gray-400">{{ service.description }}</p>
+                </div>
+                {% endfor %}
+            {% else %}
+                <!-- Placeholder services -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 transition-transform duration-300 hover:transform hover:scale-105">
+                    <div class="text-blue-600 dark:text-blue-400 text-3xl mb-4">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-200">Web Development</h3>
+                    <p class="text-gray-600 dark:text-gray-400">I build responsive websites and web applications using modern technologies that work on all devices.</p>
+                </div>
+                
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 transition-transform duration-300 hover:transform hover:scale-105">
+                    <div class="text-blue-600 dark:text-blue-400 text-3xl mb-4">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-200">Mobile App Development</h3>
+                    <p class="text-gray-600 dark:text-gray-400">I create cross-platform mobile applications that provide seamless user experiences.</p>
+                </div>
+                
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 transition-transform duration-300 hover:transform hover:scale-105">
+                    <div class="text-blue-600 dark:text-blue-400 text-3xl mb-4">
+                        <i class="fas fa-paint-brush"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-200">UI/UX Design</h3>
+                    <p class="text-gray-600 dark:text-gray-400">I design intuitive and engaging user interfaces that enhance user experience and satisfaction.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Featured Projects -->
+<section class="py-20" :class="{ 'bg-gray-50': !darkMode, 'bg-gray-800': darkMode }">
+    <div class="container mx-auto px-4">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold mb-4 text-blue-600 dark:text-blue-400">Featured Projects</h2>
+            <p class="text-lg max-w-2xl mx-auto text-gray-700 dark:text-gray-300">
+                Here are some of my best and most recent projects. Each one demonstrates different skills and approaches.
+            </p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% if projects %}
+                {% for project in projects %}
+                <div class="bg-white dark:bg-gray-700 rounded-lg overflow-hidden shadow-md transition-all duration-300 hover:shadow-xl">
+                    <div class="relative overflow-hidden" style="height: 200px;">
+                        <img src="{{ project.thumbnail.url }}" alt="{{ project.title }}" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-200">{{ project.title }}</h3>
+                        <p class="text-gray-600 dark:text-gray-400 mb-4">{{ project.summary|truncatechars:100 }}</p>
+                        
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            {% for tech in project.technologies.all|slice:":3" %}
+                            <span class="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-sm">{{ tech.name }}</span>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="flex justify-between items-center">
+                            <a href="{% url 'projects:project_detail' project.slug %}" class="text-blue-600 dark:text-blue-400 hover:underline">View Details</a>
+                            
+                            <div class="flex space-x-3">
+                                {% if project.github_link %}
+                                <a href="{{ project.github_link }}" target="_blank" class="text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400">
+                                    <i class="fab fa-github"></i>
+                                </a>
+                                {% endif %}
+                                
+                                {% if project.live_link %}
+                                <a href="{{ project.live_link }}" target="_blank" class="text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <!-- Placeholder projects -->
+                <div class="bg-white dark:bg-gray-700 rounded-lg overflow-hidden shadow-md">
+                    <div class="bg-gray-300 dark:bg-gray-600 h-48"></div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-200">E-Commerce Platform</h3>
+                        <p class="text-gray-600 dark:text-gray-400 mb-4">A full-featured online store built with Django and React.</p>
+                        
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-sm">Django</span>
+                            <span class="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-sm">React</span>
+                            <span class="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-sm">PostgreSQL</span>
+                        </div>
+                        
+                        <div class="flex justify-between items-center">
+                            <a href="#" class="text-blue-600 dark:text-blue-400 hover:underline">View Details</a>
+                            
+                            <div class="flex space-x-3">
+                                <a href="#" class="text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400">
+                                    <i class="fab fa-github"></i>
+                                </a>
+                                <a href="#" class="text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white dark:bg-gray-700 rounded-lg overflow-hidden shadow-md">
+                    <div class="bg-gray-300 dark:bg-gray-600 h-48"></div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-200">Task Management App</h3>
+                        <p class="text-gray-600 dark:text-gray-400 mb-4">A productivity app built with React Native for iOS and Android.</p>
+                        
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-sm">React Native</span>
+                            <span class="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-sm">Firebase</span>
+                        </div>
+                        
+                        <div class="flex justify-between items-center">
+                            <a href="#" class="text-blue-600 dark:text-blue-400 hover:underline">View Details</a>
+                            
+                            <div class="flex space-x-3">
+                                <a href="#" class="text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400">
+                                    <i class="fab fa-github"></i>
+                                </a>
+                                <a href="#" class="text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white dark:bg-gray-700 rounded-lg overflow-hidden shadow-md">
+                    <div class="bg-gray-300 dark:bg-gray-600 h-48"></div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-200">Portfolio Website</h3>
+                        <p class="text-gray-600 dark:text-gray-400 mb-4">A responsive portfolio website built with Django and Tailwind CSS.</p>
+                        
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-sm">Django</span>
+                            <span class="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-sm">Tailwind CSS</span>
+                        </div>
+                        
+                        <div class="flex justify-between items-center">
+                            <a href="#" class="text-blue-600 dark:text-blue-400 hover:underline">View Details</a>
+                            
+                            <div class="flex space-x-3">
+                                <a href="#" class="text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400">
+                                    <i class="fab fa-github"></i>
+                                </a>
+                                <a href="#" class="text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+        
+        <div class="text-center mt-10">
+            <a href="{% url 'projects:project_list' %}" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition duration-300">
+                View All Projects
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="py-20" :class="{ 'bg-white': !darkMode, 'bg-gray-900': darkMode }">
+    <div class="container mx-auto px-4">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold mb-4 text-blue-600 dark:text-blue-400">Client Testimonials</h2>
+            <p class="text-lg max-w-2xl mx-auto text-gray-700 dark:text-gray-300">
+                What people say about working with me and my services.
+            </p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% if testimonials %}
+                {% for testimonial in testimonials %}
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 transition-all duration-300 hover:shadow-lg">
+                    <div class="flex justify-center mb-4">
+                        <div class="flex">
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= testimonial.rating %}
+                                <i class="fas fa-star text-yellow-400"></i>
+                                {% else %}
+                                <i class="far fa-star text-yellow-400"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <p class="text-gray-600 dark:text-gray-400 mb-6 italic">{{ testimonial.content }}</p>
+                    
+                    <div class="flex items-center">
+                        {% if testimonial.image %}
+                        <img src="{{ testimonial.image.url }}" alt="{{ testimonial.name }}" class="w-12 h-12 rounded-full mr-4 object-cover">
+                        {% else %}
+                        <div class="w-12 h-12 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center mr-4">
+                            <i class="fas fa-user text-gray-500 dark:text-gray-400"></i>
+                        </div>
+                        {% endif %}
+                        
+                        <div>
+                            <h4 class="font-semibold text-gray-800 dark:text-gray-200">{{ testimonial.name }}</h4>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">{{ testimonial.position }}{% if testimonial.company %}, {{ testimonial.company }}{% endif %}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <!-- Placeholder testimonials -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+                    <div class="flex justify-center mb-4">
+                        <div class="flex">
+                            <i class="fas fa-star text-yellow-400"></i>
+                            <i class="fas fa-star text-yellow-400"></i>
+                            <i class="fas fa-star text-yellow-400"></i>
+                            <i class="fas fa-star text-yellow-400"></i>
+                            <i class="fas fa-star text-yellow-400"></i>
+                        </div>
+                    </div>
+                    
+                    <p class="text-gray-600 dark:text-gray-400 mb-6 italic">"Working with John was an absolute pleasure. He understood our requirements perfectly and delivered an outstanding website that exceeded our expectations."</p>
+                    
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center mr-4">
+                            <i class="fas fa-user text-gray-500 dark:text-gray-400"></i>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-semibold text-gray-800 dark:text-gray-200">Sarah Johnson</h4>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">CEO, Example Inc.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+                    <div class="flex justify-center mb-4">
+                        <div class="flex">
+                            <i class="fas fa-star text-yellow-400"></i>
+                            <i class="fas fa-star text-yellow-400"></i>
+                            <i class="fas fa-star text-yellow-400"></i>
+                            <i class="fas fa-star text-yellow-400"></i>
+                            <i class="fas fa-star text-yellow-400"></i>
+                        </div>
+                    </div>
+                    
+                    <p class="text-gray-600 dark:text-gray-400 mb-6 italic">"John's technical skills and attention to detail are impressive. He delivered our project on time and was very responsive to our feedback and change requests."</p>
+                    
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center mr-4">
+                            <i class="fas fa-user text-gray-500 dark:text-gray-400"></i>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-semibold text-gray-800 dark:text-gray-200">Michael Brown</h4>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Project Manager, Tech Solutions</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+                    <div class="flex justify-center mb-4">
+                        <div class="flex">
+                            <i class="fas fa-star text-yellow-400"></i>
+                            <i class="fas fa-star text-yellow-400"></i>
+                            <i class="fas fa-star text-yellow-400"></i>
+                            <i class="fas fa-star text-yellow-400"></i>
+                            <i class="far fa-star text-yellow-400"></i>
+                        </div>
+                    </div>
+                    
+                    <p class="text-gray-600 dark:text-gray-400 mb-6 italic">"I've hired John for multiple projects and his work is consistently excellent. He's a talented developer who takes the time to understand your business needs."</p>
+                    
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center mr-4">
+                            <i class="fas fa-user text-gray-500 dark:text-gray-400"></i>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-semibold text-gray-800 dark:text-gray-200">Emily Davis</h4>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Marketing Director, Creative Agency</p>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Blog Section -->
+<section class="py-20" :class="{ 'bg-gray-50': !darkMode, 'bg-gray-800': darkMode }">
+    <div class="container mx-auto px-4">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold mb-4 text-blue-600 dark:text-blue-400">Latest Blog Posts</h2>
+            <p class="text-lg max-w-2xl mx-auto text-gray-700 dark:text-gray-300">
+                Check out my latest articles, tutorials, and thoughts on technology and development.
+            </p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% if posts %}
+                {% for post in posts %}
+                <div class="bg-white dark:bg-gray-700 rounded-lg overflow-hidden shadow-md transition-all duration-300 hover:shadow-xl">
+                    {% if post.featured_image %}
+                    <div class="relative overflow-hidden" style="height: 200px;">
+                        <img src="{{ post.featured_image.url }}" alt="{{ post.title }}" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+                    </div>
+                    {% else %}
+                    <div class="bg-gray-300 dark:bg-gray-600 h-48 flex items-center justify-center">
+                        <i class="fas fa-image text-4xl text-gray-500 dark:text-gray-400"></i>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="p-6">
+                        <div class="flex items-center mb-3 text-sm text-gray-500 dark:text-gray-400">
+                            <span class="mr-3">
+                                <i class="far fa-calendar-alt mr-1"></i>
+                                {{ post.published_date|date:"M d, Y" }}
+                            </span>
+                            {% if post.category %}
+                            <span>
+                                <i class="far fa-folder mr-1"></i>
+                                {{ post.category.name }}
+                            </span>
+                            {% endif %}
+                        </div>
+                        
+                        <h3 class="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-200">{{ post.title }}</h3>
+                        <p class="text-gray-600 dark:text-gray-400 mb-4">{{ post.summary|truncatechars:100 }}</p>
+                        
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            {% for tag in post.tags.all|slice:":3" %}
+                            <span class="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-sm">{{ tag.name }}</span>
+                            {% endfor %}
+                        </div>
+                        
+                        <a href="{% url 'blog:post_detail' post.slug %}" class="text-blue-600 dark:text-blue-400 hover:underline">Read More</a>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <!-- Placeholder blog posts -->
+                <div class="bg-white dark:bg-gray-700 rounded-lg overflow-hidden shadow-md">
+                    <div class="bg-gray-300 dark:bg-gray-600 h-48"></div>
+                    <div class="p-6">
+                        <div class="flex items-center mb-3 text-sm text-gray-500 dark:text-gray-400">
+                            <span class="mr-3">
+                                <i class="far fa-calendar-alt mr-1"></i>
+                                Jun 15, 2025
+                            </span>
+                            <span>
+                                <i class="far fa-folder mr-1"></i>
+                                Web Development
+                            </span>
+                        </div>
+                        
+                        <h3 class="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-200">Getting Started with Django</h3>
+                        <p class="text-gray-600 dark:text-gray-400 mb-4">A comprehensive guide to setting up your first Django project and understanding the framework's architecture.</p>
+                        
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-sm">Django</span>
+                            <span class="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-sm">Python</span>
+                        </div>
+                        
+                        <a href="#" class="text-blue-600 dark:text-blue-400 hover:underline">Read More</a>
+                    </div>
+                </div>
+                
+                <div class="bg-white dark:bg-gray-700 rounded-lg overflow-hidden shadow-md">
+                    <div class="bg-gray-300 dark:bg-gray-600 h-48"></div>
+                    <div class="p-6">
+                        <div class="flex items-center mb-3 text-sm text-gray-500 dark:text-gray-400">
+                            <span class="mr-3">
+                                <i class="far fa-calendar-alt mr-1"></i>
+                                May 28, 2025
+                            </span>
+                            <span>
+                                <i class="far fa-folder mr-1"></i>
+                                UI/UX
+                            </span>
+                        </div>
+                        
+                        <h3 class="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-200">Principles of Good UI Design</h3>
+                        <p class="text-gray-600 dark:text-gray-400 mb-4">Exploring the key principles that make a user interface intuitive, accessible, and enjoyable to use.</p>
+                        
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-sm">UI Design</span>
+                            <span class="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-sm">UX</span>
+                        </div>
+                        
+                        <a href="#" class="text-blue-600 dark:text-blue-400 hover:underline">Read More</a>
+                    </div>
+                </div>
+                
+                <div class="bg-white dark:bg-gray-700 rounded-lg overflow-hidden shadow-md">
+                    <div class="bg-gray-300 dark:bg-gray-600 h-48"></div>
+                    <div class="p-6">
+                        <div class="flex items-center mb-3 text-sm text-gray-500 dark:text-gray-400">
+                            <span class="mr-3">
+                                <i class="far fa-calendar-alt mr-1"></i>
+                                Apr 10, 2025
+                            </span>
+                            <span>
+                                <i class="far fa-folder mr-1"></i>
+                                Mobile
+                            </span>
+                        </div>
+                        
+                        <h3 class="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-200">Building with React Native</h3>
+                        <p class="text-gray-600 dark:text-gray-400 mb-4">Tips and tricks for developing cross-platform mobile applications using React Native.</p>
+                        
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-sm">React Native</span>
+                            <span class="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-sm">Mobile</span>
+                        </div>
+                        
+                        <a href="#" class="text-blue-600 dark:text-blue-400 hover:underline">Read More</a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+        
+        <div class="text-center mt-10">
+            <a href="{% url 'blog:post_list' %}" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition duration-300">
+                View All Posts
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Contact CTA -->
+<section class="py-20 bg-gradient-to-r from-blue-600 to-indigo-800 text-white">
+    <div class="container mx-auto px-4 text-center">
+        <h2 class="text-3xl font-bold mb-6">Let's Work Together</h2>
+        <p class="text-xl max-w-2xl mx-auto mb-8">
+            Have a project in mind? Let's discuss how I can help you turn your idea into reality.
+        </p>
+        <a href="{% url 'core:contact' %}" class="px-8 py-4 bg-white text-blue-600 font-semibold rounded-md shadow-lg hover:bg-gray-100 transition duration-300 transform hover:scale-105">
+            Get in Touch
+        </a>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Add animations to elements when they come into view
+    document.addEventListener('DOMContentLoaded', function() {
+        // Animation for the hero section
+        document.querySelector('.animate-fade-in').classList.add('opacity-0');
+        setTimeout(function() {
+            document.querySelector('.animate-fade-in').classList.add('transition-opacity', 'duration-1000');
+            document.querySelector('.animate-fade-in').classList.remove('opacity-0');
+        }, 200);
+    });
+</script>
+{% endblock %}

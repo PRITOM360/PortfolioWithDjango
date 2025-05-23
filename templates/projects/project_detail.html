@@ -1,0 +1,191 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ project.title }} | {{ block.super }}{% endblock %}
+
+{% block content %}
+<!-- Project Header -->
+<section class="relative py-20 bg-blue-600 text-white">
+    <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto">
+            <h1 class="text-4xl font-bold mb-4">{{ project.title }}</h1>
+            
+            {% if project.category %}
+            <div class="mb-4">
+                <a href="{% url 'projects:project_category' project.category.slug %}" class="inline-flex items-center text-sm bg-blue-700 text-white px-3 py-1 rounded-full hover:bg-blue-800 transition duration-200">
+                    {{ project.category.name }}
+                </a>
+            </div>
+            {% endif %}
+            
+            <p class="text-xl">{{ project.summary }}</p>
+            
+            <div class="mt-6 flex items-center space-x-4">
+                {% if project.completion_date %}
+                <div class="flex items-center">
+                    <i class="far fa-calendar-alt mr-2"></i>
+                    <span>{{ project.completion_date|date:"F Y" }}</span>
+                </div>
+                {% endif %}
+                
+                <div class="flex space-x-3">
+                    {% if project.github_link %}
+                    <a href="{{ project.github_link }}" target="_blank" class="text-white hover:text-blue-200 transition duration-200">
+                        <i class="fab fa-github text-lg"></i>
+                    </a>
+                    {% endif %}
+                    
+                    {% if project.live_link %}
+                    <a href="{{ project.live_link }}" target="_blank" class="text-white hover:text-blue-200 transition duration-200">
+                        <i class="fas fa-external-link-alt text-lg"></i>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Project Content -->
+<section class="py-16" :class="{ 'bg-white': !darkMode, 'bg-gray-900': darkMode }">
+    <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto">
+            <!-- Featured Image -->
+            <div class="mb-10 rounded-lg overflow-hidden shadow-xl">
+                <img src="{{ project.thumbnail.url }}" alt="{{ project.title }}" class="w-full h-auto">
+            </div>
+            
+            <!-- Technologies Used -->
+            <div class="mb-10">
+                <h3 class="text-2xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Technologies Used</h3>
+                
+                <div class="flex flex-wrap gap-2">
+                    {% for tech in project.technologies.all %}
+                    <a href="{% url 'projects:project_technology' tech.slug %}" class="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/50 transition duration-200">
+                        {% if tech.icon %}
+                        <i class="{{ tech.icon }} mr-2"></i>
+                        {% endif %}
+                        {{ tech.name }}
+                    </a>
+                    {% empty %}
+                    <span class="text-gray-500 dark:text-gray-400">No technologies specified</span>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- Project Description -->
+            <div class="mb-10">
+                <h3 class="text-2xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Project Details</h3>
+                
+                <div class="prose max-w-none dark:prose-invert">
+                    {{ project.description|safe }}
+                </div>
+            </div>
+            
+            <!-- Project Gallery -->
+            {% if project.images.all %}
+            <div class="mb-10">
+                <h3 class="text-2xl font-semibold mb-6 text-blue-600 dark:text-blue-400">Project Gallery</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {% for image in project.images.all %}
+                    <div class="rounded-lg overflow-hidden shadow-md hover:shadow-lg transition duration-300">
+                        <a href="{{ image.image.url }}" data-lightbox="project-gallery" data-title="{{ image.caption }}">
+                            <img src="{{ image.image.url }}" alt="{{ image.caption|default:project.title }}" class="w-full h-auto">
+                        </a>
+                        {% if image.caption %}
+                        <div class="p-3 bg-gray-100 dark:bg-gray-800">
+                            <p class="text-sm text-gray-700 dark:text-gray-300">{{ image.caption }}</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Project Links -->
+            <div class="flex flex-wrap gap-4 mb-10">
+                {% if project.github_link %}
+                <a href="{{ project.github_link }}" target="_blank" class="inline-flex items-center px-6 py-3 bg-gray-800 dark:bg-gray-700 text-white rounded-md hover:bg-gray-700 dark:hover:bg-gray-600 transition duration-300">
+                    <i class="fab fa-github mr-2"></i> View on GitHub
+                </a>
+                {% endif %}
+                
+                {% if project.live_link %}
+                <a href="{{ project.live_link }}" target="_blank" class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-300">
+                    <i class="fas fa-external-link-alt mr-2"></i> View Live Project
+                </a>
+                {% endif %}
+            </div>
+            
+            <!-- Navigation -->
+            <div class="flex justify-between pt-6 border-t border-gray-200 dark:border-gray-700">
+                <a href="{% url 'projects:project_list' %}" class="inline-flex items-center text-blue-600 dark:text-blue-400 hover:underline">
+                    <i class="fas fa-chevron-left mr-2"></i> Back to Projects
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Related Projects -->
+{% if related_projects %}
+<section class="py-16 bg-gray-50 dark:bg-gray-800">
+    <div class="container mx-auto px-4">
+        <div class="max-w-5xl mx-auto">
+            <h2 class="text-3xl font-bold mb-8 text-center text-blue-600 dark:text-blue-400">Related Projects</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {% for related in related_projects %}
+                <div class="bg-white dark:bg-gray-700 rounded-lg overflow-hidden shadow-md transition-all duration-300 hover:shadow-xl">
+                    <div class="relative overflow-hidden" style="height: 160px;">
+                        <img src="{{ related.thumbnail.url }}" alt="{{ related.title }}" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+                    </div>
+                    
+                    <div class="p-5">
+                        <h3 class="text-lg font-semibold mb-2 text-gray-800 dark:text-gray-200">{{ related.title }}</h3>
+                        <p class="text-gray-600 dark:text-gray-400 mb-4 text-sm">{{ related.summary|truncatechars:80 }}</p>
+                        
+                        <a href="{% url 'projects:project_detail' related.slug %}" class="text-blue-600 dark:text-blue-400 hover:underline text-sm font-medium">View Project</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- CTA Section -->
+<section class="py-16 bg-gradient-to-r from-blue-600 to-indigo-800 text-white">
+    <div class="container mx-auto px-4 text-center">
+        <h2 class="text-3xl font-bold mb-6">Interested in a Similar Project?</h2>
+        <p class="text-xl max-w-2xl mx-auto mb-8">
+            Let's discuss how I can help bring your ideas to life with the same attention to detail and quality.
+        </p>
+        <a href="{% url 'core:contact' %}" class="px-8 py-4 bg-white text-blue-600 font-semibold rounded-md shadow-lg hover:bg-gray-100 transition duration-300">
+            Get in Touch
+        </a>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<!-- Lightbox CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css">
+{% endblock %}
+
+{% block extra_js %}
+<!-- Lightbox JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize lightbox
+        lightbox.option({
+            'resizeDuration': 200,
+            'wrapAround': true,
+            'albumLabel': "Image %1 of %2"
+        });
+    });
+</script>
+{% endblock %}

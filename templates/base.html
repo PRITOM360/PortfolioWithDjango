@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO Meta Tags -->
+    <title>{% block title %}{% if site_settings %}{{ site_settings.site_title }}{% else %}My Portfolio{% endif %}{% endblock %}</title>
+    <meta name="description" content="{% if site_settings and site_settings.meta_description %}{{ site_settings.meta_description }}{% else %}Professional portfolio showcasing my skills, projects, and experience.{% endif %}">
+    <meta name="keywords" content="{% if site_settings and site_settings.meta_keywords %}{{ site_settings.meta_keywords }}{% else %}portfolio, developer, designer, projects{% endif %}">
+    
+    <!-- Favicon -->
+    {% if site_settings and site_settings.favicon %}
+    <link rel="icon" href="{{ site_settings.favicon.url }}" type="image/x-icon">
+    {% endif %}
+    
+    <!-- Tailwind CSS -->
+    {% load static compress %}
+    {% compress css %}
+    <link rel="stylesheet" href="{% static 'css/dist/styles.css' %}">
+    {% endcompress %}
+    
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <style>
+        [x-cloak] { display: none !important; }
+        
+        /* Theme toggle transitions */
+        .dark-mode-transition {
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body x-data="{ darkMode: localStorage.getItem('darkMode') === 'true' }" 
+      x-init="$watch('darkMode', val => localStorage.setItem('darkMode', val))"
+      :class="{ 'dark bg-gray-900 text-gray-100 dark-mode-transition': darkMode, 'bg-white text-gray-800 dark-mode-transition': !darkMode }"
+      class="h-full flex flex-col">
+
+    {% include 'includes/header.html' %}
+    
+    <main class="flex-grow">
+        {% block content %}{% endblock %}
+    </main>
+    
+    {% include 'includes/footer.html' %}
+    
+    <!-- Scroll to top button -->
+    <button id="scrollToTopBtn" class="fixed bottom-8 right-8 bg-blue-600 text-white p-3 rounded-full shadow-lg opacity-0 transition-opacity duration-300 hover:bg-blue-700" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+    
+    <!-- Core JS -->
+    <script>
+        // Show/hide scroll to top button
+        window.addEventListener('scroll', function() {
+            const scrollToTopBtn = document.getElementById('scrollToTopBtn');
+            if (window.scrollY > 300) {
+                scrollToTopBtn.classList.replace('opacity-0', 'opacity-100');
+            } else {
+                scrollToTopBtn.classList.replace('opacity-100', 'opacity-0');
+            }
+        });
+        
+        // Initialize tooltips if needed
+        document.addEventListener('DOMContentLoaded', function() {
+            // Any additional initialization code
+        });
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

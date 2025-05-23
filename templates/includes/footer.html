@@ -1,0 +1,95 @@
+<!-- Footer -->
+<footer :class="{ 'bg-gray-100 text-gray-800': !darkMode, 'bg-gray-800 text-gray-200': darkMode }" class="py-10 transition-colors duration-300">
+    <div class="container mx-auto px-4">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <!-- About Section -->
+            <div class="md:col-span-2">
+                <h3 class="text-lg font-semibold mb-4 text-blue-600 dark:text-blue-400">
+                    {% if site_settings %}{{ site_settings.site_title }}{% else %}My Portfolio{% endif %}
+                </h3>
+                <p class="mb-4 text-sm leading-relaxed">
+                    Professional portfolio showcasing my skills, projects, and experience in web development, design, and more.
+                </p>
+                
+                <!-- Social Links -->
+                <div class="flex space-x-4 mt-4">
+                    {% if site_settings and site_settings.github %}
+                    <a href="{{ site_settings.github }}" target="_blank" class="text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors duration-200">
+                        <i class="fab fa-github text-xl"></i>
+                    </a>
+                    {% endif %}
+                    
+                    {% if site_settings and site_settings.linkedin %}
+                    <a href="{{ site_settings.linkedin }}" target="_blank" class="text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors duration-200">
+                        <i class="fab fa-linkedin text-xl"></i>
+                    </a>
+                    {% endif %}
+                    
+                    {% if site_settings and site_settings.twitter %}
+                    <a href="{{ site_settings.twitter }}" target="_blank" class="text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors duration-200">
+                        <i class="fab fa-twitter text-xl"></i>
+                    </a>
+                    {% endif %}
+                    
+                    {% if site_settings and site_settings.instagram %}
+                    <a href="{{ site_settings.instagram }}" target="_blank" class="text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors duration-200">
+                        <i class="fab fa-instagram text-xl"></i>
+                    </a>
+                    {% endif %}
+                    
+                    {% if site_settings and site_settings.facebook %}
+                    <a href="{{ site_settings.facebook }}" target="_blank" class="text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors duration-200">
+                        <i class="fab fa-facebook text-xl"></i>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Quick Links -->
+            <div>
+                <h3 class="text-lg font-semibold mb-4 text-blue-600 dark:text-blue-400">Quick Links</h3>
+                <ul class="space-y-2">
+                    <li><a href="{% url 'core:home' %}" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">Home</a></li>
+                    <li><a href="{% url 'core:about' %}" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">About</a></li>
+                    <li><a href="{% url 'projects:project_list' %}" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">Projects</a></li>
+                    <li><a href="{% url 'core:skills' %}" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">Skills</a></li>
+                    <li><a href="{% url 'blog:post_list' %}" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">Blog</a></li>
+                    <li><a href="{% url 'core:contact' %}" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">Contact</a></li>
+                </ul>
+            </div>
+            
+            <!-- Contact Info -->
+            <div>
+                <h3 class="text-lg font-semibold mb-4 text-blue-600 dark:text-blue-400">Contact Info</h3>
+                <ul class="space-y-3">
+                    {% if site_settings and site_settings.email %}
+                    <li class="flex items-start">
+                        <i class="fas fa-envelope mt-1 mr-3 text-blue-600 dark:text-blue-400"></i>
+                        <span>{{ site_settings.email }}</span>
+                    </li>
+                    {% endif %}
+                    
+                    {% if site_settings and site_settings.phone %}
+                    <li class="flex items-start">
+                        <i class="fas fa-phone-alt mt-1 mr-3 text-blue-600 dark:text-blue-400"></i>
+                        <span>{{ site_settings.phone }}</span>
+                    </li>
+                    {% endif %}
+                    
+                    {% if site_settings and site_settings.address %}
+                    <li class="flex items-start">
+                        <i class="fas fa-map-marker-alt mt-1 mr-3 text-blue-600 dark:text-blue-400"></i>
+                        <span>{{ site_settings.address }}</span>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+        
+        <div class="border-t dark:border-gray-700 mt-8 pt-6 text-center">
+            <p class="text-sm">
+                {% if site_settings %}{{ site_settings.footer_text }}{% else %}© 2025 All Rights Reserved{% endif %}
+            </p>
+        </div>
+    </div>
+</footer>

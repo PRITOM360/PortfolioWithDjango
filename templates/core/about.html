@@ -1,0 +1,272 @@
+{% extends 'base.html' %}
+
+{% block title %}About Me | {{ block.super }}{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="relative py-20 bg-blue-600 text-white">
+    <div class="container mx-auto px-4 text-center">
+        <h1 class="text-4xl font-bold mb-4">About Me</h1>
+        <p class="text-xl max-w-2xl mx-auto">
+            Learn more about my background, experience, and what drives me.
+        </p>
+    </div>
+</section>
+
+<!-- About Content -->
+<section class="py-16" :class="{ 'bg-white': !darkMode, 'bg-gray-900': darkMode }">
+    <div class="container mx-auto px-4">
+        <div class="flex flex-col md:flex-row items-start gap-12">
+            <!-- Image and Personal Info -->
+            <div class="md:w-1/3">
+                {% if about and about.profile_image %}
+                <img src="{{ about.profile_image.url }}" alt="Profile Picture" class="rounded-lg shadow-xl w-full h-auto object-cover mb-8">
+                {% else %}
+                <div class="bg-gray-300 dark:bg-gray-700 rounded-lg w-full aspect-square flex items-center justify-center mb-8">
+                    <i class="fas fa-user text-6xl text-gray-500 dark:text-gray-400"></i>
+                </div>
+                {% endif %}
+                
+                <div class="bg-gray-100 dark:bg-gray-800 rounded-lg p-6 shadow-md">
+                    <h3 class="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Personal Info</h3>
+                    
+                    <ul class="space-y-3">
+                        <li class="flex items-center">
+                            <i class="fas fa-user text-blue-600 dark:text-blue-400 w-6"></i>
+                            <span class="ml-3 text-gray-700 dark:text-gray-300">John Doe</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-briefcase text-blue-600 dark:text-blue-400 w-6"></i>
+                            <span class="ml-3 text-gray-700 dark:text-gray-300">Full Stack Developer</span>
+                        </li>
+                        {% if site_settings and site_settings.email %}
+                        <li class="flex items-center">
+                            <i class="fas fa-envelope text-blue-600 dark:text-blue-400 w-6"></i>
+                            <span class="ml-3 text-gray-700 dark:text-gray-300">{{ site_settings.email }}</span>
+                        </li>
+                        {% endif %}
+                        {% if site_settings and site_settings.phone %}
+                        <li class="flex items-center">
+                            <i class="fas fa-phone text-blue-600 dark:text-blue-400 w-6"></i>
+                            <span class="ml-3 text-gray-700 dark:text-gray-300">{{ site_settings.phone }}</span>
+                        </li>
+                        {% endif %}
+                        {% if site_settings and site_settings.address %}
+                        <li class="flex items-start">
+                            <i class="fas fa-map-marker-alt text-blue-600 dark:text-blue-400 w-6 mt-1"></i>
+                            <span class="ml-3 text-gray-700 dark:text-gray-300">{{ site_settings.address }}</span>
+                        </li>
+                        {% endif %}
+                    </ul>
+                    
+                    {% if about and about.resume %}
+                    <div class="mt-6">
+                        <a href="{{ about.resume.url }}" target="_blank" class="inline-flex items-center justify-center w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition duration-300">
+                            <i class="fas fa-download mr-2"></i> Download CV
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- About Content -->
+            <div class="md:w-2/3">
+                <h2 class="text-3xl font-bold mb-6 text-blue-600 dark:text-blue-400">
+                    {% if about %}{{ about.title }}{% else %}About Me{% endif %}
+                </h2>
+                
+                {% if about and about.subtitle %}
+                <p class="text-xl mb-6 text-gray-700 dark:text-gray-300">{{ about.subtitle }}</p>
+                {% endif %}
+                
+                <div class="prose max-w-none dark:prose-invert mb-8">
+                    {% if about %}
+                    {{ about.content|safe }}
+                    {% else %}
+                    <p>I'm a passionate full-stack developer with expertise in modern web technologies. I love creating beautiful, functional, and user-friendly applications that solve real-world problems.</p>
+                    <p>With a strong foundation in both front-end and back-end development, I bring a holistic approach to every project. My experience spans across various industries, from e-commerce to fintech, allowing me to understand diverse business needs and translate them into effective technical solutions.</p>
+                    <p>I believe in writing clean, maintainable code and staying up-to-date with the latest industry trends and best practices. When I'm not coding, you'll find me contributing to open-source projects, mentoring junior developers, or exploring new technologies.</p>
+                    {% endif %}
+                </div>
+                
+                <!-- Stats -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
+                    <div class="p-4 rounded-lg bg-gray-100 dark:bg-gray-800 text-center">
+                        <h3 class="text-3xl font-bold text-blue-600 dark:text-blue-400">{{ about.years_experience|default:"5+" }}</h3>
+                        <p class="text-gray-600 dark:text-gray-400">Years Experience</p>
+                    </div>
+                    <div class="p-4 rounded-lg bg-gray-100 dark:bg-gray-800 text-center">
+                        <h3 class="text-3xl font-bold text-blue-600 dark:text-blue-400">{{ about.projects_count|default:"50+" }}</h3>
+                        <p class="text-gray-600 dark:text-gray-400">Projects Completed</p>
+                    </div>
+                    <div class="p-4 rounded-lg bg-gray-100 dark:bg-gray-800 text-center">
+                        <h3 class="text-3xl font-bold text-blue-600 dark:text-blue-400">{{ about.clients_count|default:"20+" }}</h3>
+                        <p class="text-gray-600 dark:text-gray-400">Happy Clients</p>
+                    </div>
+                </div>
+                
+                <!-- Experience -->
+                <div class="mb-12">
+                    <h3 class="text-2xl font-semibold mb-6 text-blue-600 dark:text-blue-400">
+                        <i class="fas fa-briefcase mr-2"></i> Work Experience
+                    </h3>
+                    
+                    <div class="space-y-8">
+                        {% if experience %}
+                            {% for job in experience %}
+                            <div class="relative pl-8 pb-6 border-l-2 border-blue-600 dark:border-blue-400">
+                                <div class="absolute left-[-8px] top-0 w-4 h-4 bg-blue-600 dark:bg-blue-400 rounded-full"></div>
+                                
+                                <div class="mb-2">
+                                    <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200">{{ job.position }}</h4>
+                                    <p class="text-blue-600 dark:text-blue-400">{{ job.company }}</p>
+                                </div>
+                                
+                                <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">
+                                    {{ job.start_date|date:"M Y" }} - 
+                                    {% if job.is_current %}
+                                    Present
+                                    {% else %}
+                                    {{ job.end_date|date:"M Y" }}
+                                    {% endif %}
+                                    {% if job.location %} | {{ job.location }}{% endif %}
+                                </p>
+                                
+                                <div class="prose max-w-none dark:prose-invert">
+                                    {{ job.description|safe }}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <!-- Placeholder experience -->
+                            <div class="relative pl-8 pb-6 border-l-2 border-blue-600 dark:border-blue-400">
+                                <div class="absolute left-[-8px] top-0 w-4 h-4 bg-blue-600 dark:bg-blue-400 rounded-full"></div>
+                                
+                                <div class="mb-2">
+                                    <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200">Senior Full Stack Developer</h4>
+                                    <p class="text-blue-600 dark:text-blue-400">Tech Solutions Inc.</p>
+                                </div>
+                                
+                                <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">
+                                    Jan 2022 - Present | San Francisco, CA
+                                </p>
+                                
+                                <div class="prose max-w-none dark:prose-invert">
+                                    <p>Led the development of enterprise web applications using Django, React, and PostgreSQL. Collaborated with cross-functional teams to deliver high-quality software solutions on time and within budget.</p>
+                                    <ul>
+                                        <li>Developed and maintained RESTful APIs</li>
+                                        <li>Implemented CI/CD pipelines</li>
+                                        <li>Mentored junior developers</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="relative pl-8 pb-6 border-l-2 border-blue-600 dark:border-blue-400">
+                                <div class="absolute left-[-8px] top-0 w-4 h-4 bg-blue-600 dark:bg-blue-400 rounded-full"></div>
+                                
+                                <div class="mb-2">
+                                    <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200">Full Stack Developer</h4>
+                                    <p class="text-blue-600 dark:text-blue-400">Web Innovators LLC</p>
+                                </div>
+                                
+                                <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">
+                                    Mar 2019 - Dec 2021 | New York, NY
+                                </p>
+                                
+                                <div class="prose max-w-none dark:prose-invert">
+                                    <p>Designed and developed responsive web applications for clients across various industries. Utilized modern JavaScript frameworks and backend technologies to create seamless user experiences.</p>
+                                    <ul>
+                                        <li>Built e-commerce platforms</li>
+                                        <li>Optimized application performance</li>
+                                        <li>Integrated third-party APIs</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Education -->
+                <div>
+                    <h3 class="text-2xl font-semibold mb-6 text-blue-600 dark:text-blue-400">
+                        <i class="fas fa-graduation-cap mr-2"></i> Education
+                    </h3>
+                    
+                    <div class="space-y-8">
+                        {% if education %}
+                            {% for edu in education %}
+                            <div class="relative pl-8 pb-6 border-l-2 border-blue-600 dark:border-blue-400">
+                                <div class="absolute left-[-8px] top-0 w-4 h-4 bg-blue-600 dark:bg-blue-400 rounded-full"></div>
+                                
+                                <div class="mb-2">
+                                    <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200">{{ edu.degree }}</h4>
+                                    <p class="text-blue-600 dark:text-blue-400">{{ edu.institution }}</p>
+                                </div>
+                                
+                                <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">
+                                    {{ edu.start_date|date:"M Y" }} - 
+                                    {% if edu.is_current %}
+                                    Present
+                                    {% else %}
+                                    {{ edu.end_date|date:"M Y" }}
+                                    {% endif %}
+                                    {% if edu.location %} | {{ edu.location }}{% endif %}
+                                </p>
+                                
+                                {% if edu.description %}
+                                <p class="text-gray-600 dark:text-gray-400">{{ edu.description }}</p>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <!-- Placeholder education -->
+                            <div class="relative pl-8 pb-6 border-l-2 border-blue-600 dark:border-blue-400">
+                                <div class="absolute left-[-8px] top-0 w-4 h-4 bg-blue-600 dark:bg-blue-400 rounded-full"></div>
+                                
+                                <div class="mb-2">
+                                    <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200">Master of Science in Computer Science</h4>
+                                    <p class="text-blue-600 dark:text-blue-400">Stanford University</p>
+                                </div>
+                                
+                                <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">
+                                    Sep 2017 - Jun 2019 | Stanford, CA
+                                </p>
+                                
+                                <p class="text-gray-600 dark:text-gray-400">Specialized in Machine Learning and Web Technologies. Graduated with honors.</p>
+                            </div>
+                            
+                            <div class="relative pl-8 pb-6 border-l-2 border-blue-600 dark:border-blue-400">
+                                <div class="absolute left-[-8px] top-0 w-4 h-4 bg-blue-600 dark:bg-blue-400 rounded-full"></div>
+                                
+                                <div class="mb-2">
+                                    <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-200">Bachelor of Science in Software Engineering</h4>
+                                    <p class="text-blue-600 dark:text-blue-400">Massachusetts Institute of Technology</p>
+                                </div>
+                                
+                                <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">
+                                    Sep 2013 - Jun 2017 | Cambridge, MA
+                                </p>
+                                
+                                <p class="text-gray-600 dark:text-gray-400">Dean's List all semesters. Senior project: Developing an AI-powered task management system.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-16 bg-gradient-to-r from-blue-600 to-indigo-800 text-white">
+    <div class="container mx-auto px-4 text-center">
+        <h2 class="text-3xl font-bold mb-6">Interested in Working Together?</h2>
+        <p class="text-xl max-w-2xl mx-auto mb-8">
+            I'm always open to discussing new projects, creative ideas or opportunities to be part of your vision.
+        </p>
+        <a href="{% url 'core:contact' %}" class="px-8 py-4 bg-white text-blue-600 font-semibold rounded-md shadow-lg hover:bg-gray-100 transition duration-300 transform hover:scale-105">
+            Get in Touch
+        </a>
+    </div>
+</section>
+{% endblock %}
